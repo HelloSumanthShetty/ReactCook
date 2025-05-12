@@ -1,0 +1,25 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Mona+Sans:ital,wght@0,200..900;1,200..900&display=swap');
+@import "tailwindcss";
+
+@theme {
+  
+  --font-next: "Mona Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+
+}
+
+@layer base{
+  body{
+    background-color: #ffffff;
+  }
+  p {
+    display: block;
+    margin-block-start: 1em;
+    margin-block-end:   1em;
+    margin-inline-start:0px;
+    margin-inline-end:  0px;
+    unicode-bidi: isolate;
+  }
+   
+}
