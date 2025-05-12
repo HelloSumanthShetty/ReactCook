@@ -18,7 +18,7 @@ export async function getRecipeFromHuggingChat(ingredientsArr) {
   const ingredientsString = ingredientsArr.join(', ')
 try{
   const response = await hf.chatCompletion({
-model: "microsoft/Phi-3-mini-4k-instruct"
+model: "mistralai/Mistral-7B-Instruct-v0.3"
 ,
     messages: [
       { role: 'system', content: SYSTEM_PROMPT },

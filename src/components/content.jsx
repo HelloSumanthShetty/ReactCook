@@ -1,10 +1,13 @@
-import { useState } from "react"
+import { useState,useRef,useEffect } from "react"
 import {getRecipeFromHuggingChat} from '../api'
-
+import ReactMarkdown from "react-markdown"
 function content() {
 
-  const [ingredient, setingredient] = useState(["chicken","flour","oil","beadcrumbs","water","buttermilk"])
+  const [ingredient, setingredient] = useState([])
+  const [isloading, setisloading] = useState(false)
+  const recipeRef=useRef(null)
   const [recipe, setrecipe] = useState('')
+  const dis=useRef(null)
   function handle(e) {
     e.preventDefault()
     const formdate = new FormData(e.currentTarget)
@@ -18,12 +21,32 @@ function content() {
   }
   async function change(e) {
     e.preventDefault()
+    setisloading(true)
+    setrecipe('')
+   try{
     const genrecped = await getRecipeFromHuggingChat(ingredient)
     console.log(genrecped)
   setrecipe(genrecped)
+   }
+   catch(e){
+  console.log(e)
+   }finally{
+     setisloading(false)
+  }
     
   }
-  
+  useEffect(()=>{
+if(dis.current){
+  dis.current.scrollIntoView({behavior:"instant"})
+}
+  })
+
+   useEffect(() => {
+  // Check if the recipe is not empty AND the ref points to an element
+ if (recipe && recipeRef.current) {
+ recipeRef.current.scrollIntoView({ behavior: 'smooth' });
+ }
+ }, [recipe])
   const newing = ingredient.map(i => <li key={i} className=" font-next mx-10 py-2 list-disc">{i}</li>)
   return (
     <>
@@ -45,25 +68,24 @@ function content() {
           <ul >{newing}</ul>
 
         </section>}
-        {ingredient.length >5 && <div className="bg-[#ffffb0] my-20 px-5 mx-4    max-w-md font-next md:max-w-5xl md:w-4/5  py-5 w-9/10 mx-auto rounded-lg flex flex-col items-center shadow-[#f8b850] shadow-lg">
+        {ingredient.length >5 && <div ref={dis} className="bg-[#ffffb0] my-20 px-5 mx-4    max-w-md font-next md:max-w-5xl md:w-4/5  py-5 w-9/10 mx-auto rounded-lg flex flex-col items-center shadow-[#f8b850] shadow-lg">
           <div className="mb-4  flex items-center  flex-col">
             <h3 className=" text-zinc-700 text-2xl font-semibold  ">ready for a recipe?</h3>
             <h4 className="text-lg text-gray-400" >Generate a AI made recipe from your list of ingredients 😋</h4>
           </div>
-          <a    onClick={change} className="shadow-lg shadow-blue-700 hover:bg-green-500 py-2 rounded-lg w-5/8 flex justify-center md:w-2/6 md:max-w-3/6  max-w-md text-white font-semibold px-4 py-2 cursor-pointer bg-blue-700">Generate a recipe</a>
+          <a   disabled={isloading}  onClick={change} className="shadow-lg shadow-blue-700 hover:bg-green-500 py-2 rounded-lg w-5/8 flex justify-center md:w-2/6 md:max-w-3/6  max-w-md text-white font-semibold px-4 py-2 cursor-pointer bg-blue-700"> {isloading ? 'Generating...' : 'Generate a recipe'}</a>
         
         </div>}
-{
-  <p className="font-next px-6">
-   {recipe}
+{recipe &&
+  <section ref={recipeRef} className="font-next px-6 mb-3">
+   <ReactMarkdown>{recipe}</ReactMarkdown>
     
-  </p>
+  </section>  
 }
       </main>
     </>
 
   )
 }
-
 
 export default content
